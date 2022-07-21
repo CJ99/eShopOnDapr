@@ -10,7 +10,7 @@ public static class ProgramExtensions
     {
         // Disabled temporarily until https://github.com/dapr/dotnet-sdk/issues/779 is resolved.
         //builder.Configuration.AddDaprSecretStore(
-        //    "eshop-secretstore",
+        //    "secretstore",
         //    new DaprClientBuilder().Build());
     }
 
@@ -48,7 +48,7 @@ public static class ProgramExtensions
     {
         var identityServerBuilder = builder.Services.AddIdentityServer(options =>
         {
-            options.IssuerUri = "null";
+            options.IssuerUri = builder.Configuration["IssuerUrl"];
             options.Authentication.CookieLifetime = TimeSpan.FromHours(2);
 
             options.Events.RaiseErrorEvents = true;

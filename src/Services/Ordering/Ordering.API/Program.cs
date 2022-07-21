@@ -18,12 +18,20 @@ builder.Services.AddActors(options =>
 });
 builder.Services.AddSignalR();
 
+builder.Services.Configure<DaprEventBusSettings>(builder.Configuration);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseCustomSwagger();
+}
+
+var pathBase = builder.Configuration["PATH_BASE"];
+if (!string.IsNullOrEmpty(pathBase))
+{
+    app.UsePathBase(pathBase);
 }
 
 app.UseCloudEvents();

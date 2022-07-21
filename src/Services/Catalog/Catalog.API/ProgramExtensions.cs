@@ -11,7 +11,7 @@ public static class ProgramExtensions
     {
         // Disabled temporarily until https://github.com/dapr/dotnet-sdk/issues/779 is resolved.
         //builder.Configuration.AddDaprSecretStore(
-        //    "eshop-secretstore",
+        //    "secretstore",
         //    new DaprClientBuilder().Build());
     }
 
@@ -60,9 +60,13 @@ public static class ProgramExtensions
         builder.Services.AddScoped<OrderStatusChangedToPaidIntegrationEventHandler>();
     }
 
-    public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
+    public static void AddCustomDatabase(this WebApplicationBuilder builder)
+    {
+
+
         builder.Services.AddDbContext<CatalogDbContext>(
             options => options.UseSqlServer(builder.Configuration["ConnectionStrings:CatalogDB"]));
+    }
 
     public static void ApplyDatabaseMigration(this WebApplication app)
     {
@@ -90,10 +94,11 @@ public static class ProgramExtensions
                     {
                         logger.Warning(
                             exception,
-                            "Exception {ExceptionType} with message {Message} detected during database migration (retry attempt {retry})",
+                            "Exception {ExceptionType} with message {Message} detected during database migration (retry attempt {retry}, connection {connection})",
                             exception.GetType().Name,
                             exception.Message,
-                            retry);
+                            retry,
+                            configuration["ConnectionStrings:CatalogDB"]);
                     }
                 );
         }
