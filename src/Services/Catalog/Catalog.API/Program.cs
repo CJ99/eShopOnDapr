@@ -11,8 +11,6 @@ builder.AddCustomDatabase();
 builder.Services.AddDaprClient();
 builder.Services.AddControllers();
 
-builder.Services.Configure<DaprEventBusSettings>(builder.Configuration);
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -38,15 +36,7 @@ app.UseCloudEvents();
 app.MapGet("/", () => Results.LocalRedirect("~/swagger"));
 app.MapControllers();
 app.MapSubscribeHandler();
-app.MapHealthChecks("/hc", new HealthCheckOptions()
-{
-    Predicate = _ => true,
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-});
-app.MapHealthChecks("/liveness", new HealthCheckOptions
-{
-    Predicate = r => r.Name.Contains("self")
-});
+app.MapCustomHealthChecks("/hc", "/liveness", UIResponseWriter.WriteHealthCheckUIResponse);
 
 try
 {

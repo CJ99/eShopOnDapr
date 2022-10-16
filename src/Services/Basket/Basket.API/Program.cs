@@ -9,9 +9,6 @@ builder.AddCustomAuthorization();
 builder.AddCustomHealthChecks();
 builder.AddCustomApplicationServices();
 
-builder.Services.Configure<BasketSettings>(builder.Configuration);
-builder.Services.Configure<DaprEventBusSettings>(builder.Configuration);
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -35,15 +32,7 @@ app.UseCors("CorsPolicy");
 app.MapDefaultControllerRoute();
 app.MapControllers();
 app.MapSubscribeHandler();
-app.MapHealthChecks("/hc", new HealthCheckOptions()
-{
-    Predicate = _ => true,
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-});
-app.MapHealthChecks("/liveness", new HealthCheckOptions
-{
-    Predicate = r => r.Name.Contains("self")
-});
+app.MapCustomHealthChecks("/hc", "/liveness", UIResponseWriter.WriteHealthCheckUIResponse);
 
 try
 {
